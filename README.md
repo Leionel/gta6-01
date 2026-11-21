@@ -1,6 +1,6 @@
-[![gta6-01](https://make.fun/bounty/gta6-01/badge.svg)](https://make.fun/bounty/gta6-01)
-[![rank](https://make.fun/bounty/gta6-01/rank/Leionel/gta6-01.svg)](https://make.fun/bounty/gta6-01)
-[![reward](https://make.fun/bounty/gta6-01/reward/Leionel/gta6-01.svg)](https://make.fun/bounty/gta6-01)
+[![make.fun · gta6-01](https://make.fun/badge/gta6-01.svg)](https://make.fun/bounty/gta6-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
+[![rank](https://make.fun/badge/gta6-01/Leionel/gta6-01/rank.svg)](https://make.fun/bounty/gta6-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
+[![reward](https://make.fun/badge/gta6-01/Leionel/gta6-01/reward.svg)](https://make.fun/bounty/gta6-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
 
 # Palm City — Sunset Heist
 
@@ -55,7 +55,7 @@ node serve.ts   # then open http://localhost:8080
 - `game/src/interface.js` — world rendering, HUD, minimap, screens.
 - `game/src/staging.js` — deterministic screenshot scenes and debug handles.
 - `main.ts` — the hand-in program (copies `game/` + `screenshots/`, writes
-  the dossier with the vendored `vendor/makefun-game.ts`).
+   the dossier with the vendored `vendor/makefun-game.ts`).
 
 ## License
 
