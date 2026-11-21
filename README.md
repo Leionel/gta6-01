@@ -55,7 +55,7 @@ node serve.ts   # then open http://localhost:8080
 - `game/src/interface.js` — world rendering, HUD, minimap, screens.
 - `game/src/staging.js` — deterministic screenshot scenes and debug handles.
 - `main.ts` — the hand-in program (copies `game/` + `screenshots/`, writes
-   the dossier with the vendored `vendor/makefun-game.ts`).
+  the dossier with the vendored `vendor/makefun-game.ts`).
 
 ## License
 
