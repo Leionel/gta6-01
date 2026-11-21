@@ -1,5 +1,6 @@
-// Palm City renderer: sun-soaked top-down city, cars, pedestrians, HUD with a live minimap,
-// and the title / pause / busted / wasted / story-complete screens. One canvas, all code-drawn.
+// Palm City renderer: a sun-soaked top-down city, cars, pedestrians, a HUD with
+// a live minimap, and the title / pause / busted / wasted / story-complete
+// screens. One canvas, everything drawn in code.
 import { WORLD, PITCH, ROAD_W, PALETTE, MISSIONS } from './config.js';
 import { ROAD_LINES, BEACH_X0, WATER_X0 } from './city.js';
 
@@ -59,7 +60,7 @@ export function createRenderer(canvas) {
         ctx.stroke();
       }
     }
-    // Roads: asphalt bands + pale sidewalks + dashed centre lines.
+    // Roads: asphalt bands, pale sidewalks, dashed centre lines.
     for (const line of ROAD_LINES) {
       ctx.fillStyle = PALETTE.asphalt;
       ctx.fillRect(-cam.x, line - ROAD_W / 2 - cam.y, WORLD, ROAD_W);
@@ -92,10 +93,10 @@ export function createRenderer(canvas) {
       const x = b.x - cam.x;
       const y = b.y - cam.y;
       const lift = b.height * 0.45;
-      // Long afternoon shadow to the north-east.
+      // A long afternoon shadow to the north-east.
       ctx.fillStyle = 'rgba(0,0,0,0.18)';
       ctx.fillRect(x + 10, y + 8, b.w, b.h);
-      // Wall faces (extrusion) then the roof on top.
+      // Wall faces (extrusion), then the roof on top.
       ctx.fillStyle = b.wall;
       ctx.fillRect(x + 6, y - lift + 8, b.w, b.h);
       ctx.fillStyle = b.roof;
@@ -103,7 +104,7 @@ export function createRenderer(canvas) {
       ctx.strokeStyle = 'rgba(0,0,0,0.25)';
       ctx.lineWidth = 2;
       ctx.strokeRect(x, y - lift, b.w, b.h);
-      // Roof details: a lighter inset panel, and a helipad mark on the bank.
+      // Roof details: a lighter inset panel, and a $ on the bank.
       ctx.fillStyle = 'rgba(255,255,255,0.16)';
       ctx.fillRect(x + 10, y - lift + 10, b.w - 20, b.h - 20);
       if (b.kind === 'bank') {
@@ -192,11 +193,10 @@ export function createRenderer(canvas) {
       ctx.restore();
       return;
     }
-    // Shadow.
+    // Shadow, then the body.
     ctx.fillStyle = 'rgba(0,0,0,0.25)';
     roundRect(ctx, -spec.len / 2 + 3, -spec.wid / 2 + 4, spec.len, spec.wid, 8);
     ctx.fill();
-    // Body.
     ctx.fillStyle = car.color;
     roundRect(ctx, -spec.len / 2, -spec.wid / 2, spec.len, spec.wid, 8);
     ctx.fill();
@@ -323,8 +323,10 @@ export function createRenderer(canvas) {
       else if (car.driver === 'player') continue;
       else dot(car.x, car.y, 'rgba(255,255,255,0.7)', 1.6);
     }
-    for (const cop of world.cops) if (cop.downTimer <= 0) dot(cop.x, cop.y, '#3742fa', 2.5);
-    // Player arrow.
+    for (const cop of world.cops) {
+      if (cop.downTimer <= 0) dot(cop.x, cop.y, '#3742fa', 2.5);
+    }
+    // The player arrow.
     const p = world.player;
     ctx.fillStyle = '#fff';
     ctx.save();
@@ -343,7 +345,7 @@ export function createRenderer(canvas) {
   function drawHud(world) {
     const p = world.player;
     ctx.textAlign = 'left';
-    // Cash + objective.
+    // Cash + objective. The box is 350px wide so long objective lines fit.
     ctx.fillStyle = 'rgba(10,14,20,0.66)';
     roundRect(ctx, 12, 12, 350, 62, 10);
     ctx.fill();
@@ -422,7 +424,12 @@ export function createRenderer(canvas) {
     ctx.textAlign = 'center';
     ctx.fillStyle = 'rgba(255,255,255,0.55)';
     ctx.font = '12px sans-serif';
-    ctx.fillText(p.car ? 'WASD drive • Space handbrake • E exit • P pause • M mute' : 'WASD move • Shift run • E enter car • F punch • G shoot • P pause', canvas.width / 2, canvas.height - 8);
+    ctx.fillText(
+      p.car
+        ? 'WASD drive • Space handbrake • E exit • P pause • M mute'
+        : 'WASD move • Shift run • E enter car • F punch • G shoot • P pause',
+      canvas.width / 2, canvas.height - 8,
+    );
   }
 
   function drawScreen(world, screen, save) {
@@ -449,7 +456,9 @@ export function createRenderer(canvas) {
       ctx.fillText('Space handbrake  •  P pause  •  M mute  •  Progress saves automatically', canvas.width / 2, 380);
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 22px sans-serif';
-      const label = save && save.missionIndex > 0 ? `Continue — ${save.missionIndex} of 5 jobs done ($${save.cash})` : 'Press Enter or click to start';
+      const label = save && save.missionIndex > 0
+        ? `Continue — ${save.missionIndex} of 5 jobs done ($${save.cash})`
+        : 'Press Enter or click to start';
       ctx.fillText(label, canvas.width / 2, 448);
       if (save && save.stats) {
         ctx.fillStyle = 'rgba(255,255,255,0.65)';
@@ -468,7 +477,12 @@ export function createRenderer(canvas) {
       ctx.fillText(screen === SCREEN_BUSTED ? 'BUSTED' : 'WASTED', canvas.width / 2, 320);
       ctx.fillStyle = '#fff';
       ctx.font = '17px sans-serif';
-      ctx.fillText(screen === SCREEN_BUSTED ? 'The Palm City PD sends its regards. You keep the story, not the cash.' : 'You wake up at the safehouse, lighter by a hospital bill.', canvas.width / 2, 364);
+      ctx.fillText(
+        screen === SCREEN_BUSTED
+          ? 'The Palm City PD sends its regards. You keep the story, not the cash.'
+          : 'You wake up at the safehouse, lighter by a hospital bill.',
+        canvas.width / 2, 364,
+      );
       ctx.font = 'bold 20px sans-serif';
       ctx.fillText('Press Enter to get back out there', canvas.width / 2, 420);
     } else if (screen === SCREEN_COMPLETE) {
@@ -485,7 +499,7 @@ export function createRenderer(canvas) {
 
   function draw(world, screen, save) {
     const cam = world.camera;
-    // Sky-tinted frame outside the world bounds.
+    // A sky-tinted frame outside the world bounds.
     ctx.fillStyle = '#87b5c9';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawGround(world);

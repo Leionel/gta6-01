@@ -1,12 +1,13 @@
-// Palm City — shared tuning. All units are world pixels and seconds unless noted.
-// The city is a grid: roads every PITCH px, ROAD_W wide, blocks of BLOCK px between them.
-export const WORLD = 2880; // world is WORLD x WORLD
-export const PITCH = 360;
-export const ROAD_W = 72;
-export const BLOCK = PITCH - ROAD_W; // 288
+// Palm City — one place for every number the game tunes by.
+// Distances are world pixels, times are seconds, speeds are px/s.
+export const WORLD = 2880; // the city is WORLD by WORLD
+export const PITCH = 360; // distance between neighbouring road centrelines
+export const ROAD_W = 72; // how wide each road is
+export const BLOCK = PITCH - ROAD_W; // 288 — the block between two roads
 export const SAVE_KEY = 'palmcity.save.v1';
-export const STEP = 1 / 60;
+export const STEP = 1 / 60; // fixed simulation step
 
+// The player on foot.
 export const PLAYER = {
   radius: 11,
   walkSpeed: 170,
@@ -17,8 +18,9 @@ export const PLAYER = {
   punchCooldown: 0.38,
 };
 
+// Every car class: body size, top speed, acceleration and how much it grips
+// the road sideways. Grip near 1 means almost no slide.
 export const CAR = {
-  // length/width per class, in px; top speed px/s; accel px/s^2; grip 0..1 (lateral friction)
   sedan: { len: 52, wid: 26, top: 430, accel: 300, grip: 0.86, hp: 100, name: 'Sedan' },
   taxi: { len: 52, wid: 26, top: 420, accel: 290, grip: 0.86, hp: 100, name: 'Taxi' },
   sports: { len: 54, wid: 26, top: 560, accel: 420, grip: 0.94, hp: 80, name: 'Comet GT' },
@@ -27,13 +29,15 @@ export const CAR = {
   van: { len: 60, wid: 28, top: 380, accel: 240, grip: 0.82, hp: 140, name: 'Van' },
 };
 
+// How the heat scales with the star count: how many police units hunt, how
+// often a new one spawns, and how long out of sight before a star drops.
 export const WANTED = {
-  // per star: how many police units hunt, how fast they spawn, decay seconds out of sight
   units: [0, 2, 3, 4, 6, 8],
   spawnEvery: [0, 4.5, 3.5, 2.8, 2.2, 1.8],
   decayAfter: [0, 9, 11, 13, 16, 20],
 };
 
+// Prices and fines, in dollars.
 export const ECONOMY = {
   sprayCost: 100,
   pistolCost: 300,
@@ -43,6 +47,8 @@ export const ECONOMY = {
   wasteFine: 250,
 };
 
+// The story, in order. Rewards: 150 + 300 + 400 + 600 + 1500, on top of the
+// $100 the player starts with — $100 → $250 → $550 → $950 → $1,550 → $3,550.
 export const MISSIONS = [
   { id: 'wheels', name: 'Wheels', reward: 150, text: 'Steal a car and bring it to the garage.' },
   { id: 'drop', name: 'The Drop', reward: 300, text: 'Deliver the package across town in 90s. No damage, no questions.' },
@@ -51,7 +57,7 @@ export const MISSIONS = [
   { id: 'bigone', name: 'The Big One', reward: 1500, text: 'Hit the bank, grab the cash, lose 4 stars and reach the safehouse.' },
 ];
 
-// Sun-soaked palette: warm asphalt, pale sidewalks, pastel buildings, turquoise water.
+// The look: warm asphalt, pale sidewalks, pastel roofs, turquoise water.
 export const PALETTE = {
   grass: '#8fbf6a',
   sand: '#e8d39a',

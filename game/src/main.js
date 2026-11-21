@@ -1,17 +1,24 @@
-// Boot and the one loop: input is read every frame, the world advances in fixed 1/60 s steps,
-// and the renderer paints what is there. Screens: title, play, paused, busted, wasted, complete.
+// Boot and the one loop: input is read every frame, the world advances in fixed
+// 1/60 s steps, and the renderer paints what is there. Screens: title, play,
+// paused, busted, wasted, complete.
 //
-// ?seed=N fixes the city. ?shot=cover|foot|chase|mission (with &seed=N) stages that scene
-// instead of running the loop, paints it twice and sets window.__shotReady for a screenshot.
-import { SAVE_KEY, STEP } from './config.js';
-import { createWorld, stepWorld, resetGame, serializeSave, applySave, EV_BUSTED, EV_WASTED, EV_MISSION } from './world.js';
+// ?seed=N fixes the city. ?shot=cover|foot|chase|mission (with &seed=N) stages
+// that scene instead of running the loop, paints it twice and sets
+// window.__shotReady for a screenshot.
+import { SAVE_KEY, STEP, MISSIONS } from './config.js';
+import {
+  createWorld, stepWorld, resetGame, serializeSave, applySave,
+  EV_BUSTED, EV_WASTED, EV_MISSION,
+} from './world.js';
 import { ACTION_CONFIRM, ACTION_PAUSE, createInput } from './input.js';
-import { createRenderer, SCREEN_TITLE, SCREEN_PLAY, SCREEN_PAUSED, SCREEN_BUSTED, SCREEN_WASTED, SCREEN_COMPLETE } from './render.js';
+import {
+  createRenderer,
+  SCREEN_TITLE, SCREEN_PLAY, SCREEN_PAUSED, SCREEN_BUSTED, SCREEN_WASTED, SCREEN_COMPLETE,
+} from './render.js';
 import { createAudio } from './audio.js';
 import { stageShot } from './shots.js';
-import { MISSIONS } from './config.js';
 
-const MAX_FRAME = 0.25;
+const MAX_FRAME = 0.25; // clamp a long frame so the loop never spirals
 
 const params = new URLSearchParams(window.location.search);
 const shot = params.get('shot');
@@ -46,6 +53,8 @@ function writeSave() {
 function runShot(name) {
   const save = readSave();
   const scene = stageShot(name, world);
+  // Debug handle for headless shot checks (read-only state inspection).
+  window.__shotWorld = world;
   let painted = 0;
   function paint() {
     renderer.draw(world, scene.screen, save);
@@ -73,9 +82,6 @@ function runGame() {
 
   function startGame() {
     audio.unlock();
-    if (save && save.missionIndex > 0 && world.missionIndex === 0 && world.player.cash === 100) {
-      // Continue: keep the loaded progress (applySave already ran at boot).
-    }
     world.player.x = world.city.spots.safehouse.x;
     world.player.y = world.city.spots.safehouse.y - 54;
     screen = SCREEN_PLAY;
@@ -100,8 +106,13 @@ function runGame() {
       }
     }
     if (actions & ACTION_PAUSE) {
-      if (screen === SCREEN_PLAY) { screen = SCREEN_PAUSED; announce('Paused.'); }
-      else if (screen === SCREEN_PAUSED) { screen = SCREEN_PLAY; announce('Playing.'); }
+      if (screen === SCREEN_PLAY) {
+        screen = SCREEN_PAUSED;
+        announce('Paused.');
+      } else if (screen === SCREEN_PAUSED) {
+        screen = SCREEN_PLAY;
+        announce('Playing.');
+      }
     }
     if (input.mouse().down && screen === SCREEN_TITLE) startGame();
   }
@@ -117,11 +128,24 @@ function runGame() {
     }
   }
 
+  // A silent audio stub for the title screen's living city: nobody plays there.
+  const quietSfx = {
+    engine: () => {}, siren: () => {}, gunshot: () => {}, punch: () => {},
+    crash: () => {}, pickup: () => {}, cash: () => {}, mission: () => {},
+    fail: () => {}, horn: () => {}, door: () => {}, busted: () => {},
+  };
+  const idleInput = {
+    move: () => ({ x: 0, y: 0 }),
+    sprint: () => false,
+    handbrake: () => false,
+    takeActions: () => 0,
+    mouse: () => ({ x: 0, y: 0, down: false }),
+  };
+
   function frame(now) {
     requestAnimationFrame(frame);
     accumulator += Math.min((now - last) / 1000, MAX_FRAME);
     last = now;
-    // Mute toggle is a key, not an action: check it directly.
     handleActions();
     if (screen === SCREEN_PLAY) {
       while (accumulator >= STEP && screen === SCREEN_PLAY) {
@@ -129,11 +153,14 @@ function runGame() {
         accumulator -= STEP;
       }
       saveTimer += 1 / 60;
-      if (saveTimer > 5) { saveTimer = 0; writeSave(); }
+      if (saveTimer > 5) {
+        saveTimer = 0;
+        writeSave();
+      }
     } else if (screen === SCREEN_TITLE) {
       // A living city behind the title: traffic and pedestrians move, nobody plays.
       while (accumulator >= STEP) {
-        stepWorld(world, STEP, { move: () => ({ x: 0, y: 0 }), sprint: () => false, handbrake: () => false, takeActions: () => 0, mouse: () => ({ x: 0, y: 0, down: false }) }, 0, { engine: () => {}, siren: () => {}, gunshot: () => {}, punch: () => {}, crash: () => {}, pickup: () => {}, cash: () => {}, mission: () => {}, fail: () => {}, horn: () => {}, door: () => {}, busted: () => {} });
+        stepWorld(world, STEP, idleInput, 0, quietSfx);
         accumulator -= STEP;
       }
     } else {
