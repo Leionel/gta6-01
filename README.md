@@ -1,45 +1,62 @@
-[![make.fun · gta6-01](https://make.fun/badge/gta6-01.svg)](https://make.fun/bounty/gta6-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
-[![rank](https://make.fun/badge/gta6-01/Leionel/gta6-01/rank.svg)](https://make.fun/bounty/gta6-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
-[![reward](https://make.fun/badge/gta6-01/Leionel/gta6-01/reward.svg)](https://make.fun/bounty/gta6-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
+[![gta6-01](https://make.fun/bounty/gta6-01/badge.svg)](https://make.fun/bounty/gta6-01)
+[![rank](https://make.fun/bounty/gta6-01/rank/Leionel/gta6-01.svg)](https://make.fun/bounty/gta6-01)
+[![reward](https://make.fun/bounty/gta6-01/reward/Leionel/gta6-01.svg)](https://make.fun/bounty/gta6-01)
 
 # Palm City — Sunset Heist
 
-A top-down open-world crime game in the spirit of GTA 6, built for
-make.fun's [gta6-01](https://make.fun/bounty/gta6-01) bounty. The city, the
-characters, the cars, the story, the art and the sound are all original —
-no Rockstar Games assets anywhere.
+An original top-down open-world crime game in the spirit of GTA 6, built for
+[make.fun's "Make GTA 6" bounty](https://make.fun/bounty/gta6-01) ($1,666 in
+USDC). It plays offline in a desktop browser from static files under `game/`
+— no network requests, no libraries, everything drawn and synthesized in code.
 
-You are Rook, a getaway driver who owes Delia Voss $50,000. Five jobs stand
-between you and a clean slate: steal a car, run a drop, shake a 3-star
-wanted level, steal the Comet GT, and hit the bank.
+You are Rook, a getaway driver who owes Delia Voss $50,000. Palm City is a
+2,880 × 2,880 open world: an 8×8 road grid with traffic and pedestrians, a
+beach and a marina, eight named places (garage, chop shop, pay-n-spray, gun
+shop, bank, safehouse, police HQ), and a wanted system with police cars and
+foot cops. Five story missions pay the debt down, job by job, from $100 to
+$3,550 — and taxis, hidden cash packages and rampages pay the rent in between.
 
-## What's in Palm City
-
-- A sun-soaked grid city, 2,880 × 2,880, with a beach, a marina, parks, a
-  bank tower, a chop shop, a spray shop and a gun shop
-- Driving and walking: sedans, taxis, sports cars, trucks and vans, any of
-  them stealable — if anyone sees you take one, the cops will know
-- Traffic that drives the road grid and pedestrians who walk the sidewalks
-  and run when things get loud
-- A wanted system: 1–5 stars, police cars and foot cops, escalation and
-  escape, pay-n-spray to go clean
-- Five story missions, plus taxi fares, hidden cash packages and rampages
-- On-foot combat (punch, pistol), car chases, crashes, busted / wasted
-- A live minimap, a HUD, synthesized engine / siren / gunshot audio, and a
-  save in localStorage
-
-## Controls
-
-- WASD / arrows: move or drive · Shift: sprint · Space: handbrake
-- E: enter / steal / exit a car · F: punch · G: shoot (buy a pistol first)
-- P: pause · M: mute · R: restart
-
-## Run it
+## Play
 
 ```sh
-node serve.ts
-# open http://localhost:8080
+node serve.ts   # then open http://localhost:8080
 ```
 
-`main.ts` (Node 22) copies `game/` and `screenshots/` to `/output` and
-writes `/output/dossier.json` for the grader.
+| Key | Action |
+| --- | --- |
+| WASD / arrows | Walk, drive, steer |
+| E | Enter / steal a car |
+| F | Punch |
+| G | Shoot (after buying the pistol at the gun shop) |
+| Space | Handbrake / drift |
+| P or Esc | Pause |
+| H | Horn |
+| M | Mute |
+
+## The five jobs
+
+1. **Wheels** (+$150) — get a car, bring it to the chop shop.
+2. **The Drop** (+$300) — a package, ninety seconds, no mistakes.
+3. **Heat** (+$400) — make three stars, then vanish.
+4. **The Collector** (+$600) — steal the pink Comet GT from the marina.
+5. **The Big One** (+$500, then +$1,500) — rob the bank, lose four stars,
+   reach the safehouse.
+
+## Layout
+
+- `game/index.html` — the page; `game/src/engine.js` — the loop and screens.
+- `game/src/constants.js` — tuning, economy, mission definitions.
+- `game/src/util.js` — seeded RNG, geometry, A\* pathfinding.
+- `game/src/map.js` — the city: roads, blocks, buildings, beach, shops.
+- `game/src/controls.js` — keyboard and mouse.
+- `game/src/sound.js` — synthesized WebAudio (engine, sirens, gunshots).
+- `game/src/actors.js` — player, traffic, pedestrians, police, wanted, economy.
+- `game/src/story.js` — the five missions and the shop interactions.
+- `game/src/interface.js` — world rendering, HUD, minimap, screens.
+- `game/src/staging.js` — deterministic screenshot scenes and debug handles.
+- `main.ts` — the hand-in program (copies `game/` + `screenshots/`, writes
+  the dossier with the vendored `vendor/makefun-game.ts`).
+
+## License
+
+MIT — see [LICENSE](LICENSE).
